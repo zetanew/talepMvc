@@ -7,10 +7,10 @@ namespace TalepYonetimi.Models
     public class RequestStatusHistory
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public int RequestId { get; set; }
+        public Guid RequestId { get; set; }
 
         [ForeignKey("RequestId")]
         public virtual Request? Request { get; set; }
@@ -29,12 +29,12 @@ namespace TalepYonetimi.Models
 
         [Required]
         [Display(Name = "Changed By")]
-        public int ChangedByUserId { get; set; }
+        public Guid ChangedByUserId { get; set; }
 
         [ForeignKey("ChangedByUserId")]
         public virtual User? ChangedByUser { get; set; }
 
         [Display(Name = "Changed Date")]
-        public DateTime ChangedDate { get; set; } = DateTime.Now;
+        public DateTime ChangedDate { get; set; } = DateTime.UtcNow;
     }
 }

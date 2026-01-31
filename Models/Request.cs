@@ -7,9 +7,10 @@ namespace TalepYonetimi.Models
     public class Request
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Display(Name = "Request No")]
+        [StringLength(20)]
         public string RequestNumber { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Title is required.")]
@@ -36,13 +37,13 @@ namespace TalepYonetimi.Models
 
         [Required]
         [Display(Name = "Created By")]
-        public int CreatedByUserId { get; set; }
+        public Guid CreatedByUserId { get; set; }
 
         [ForeignKey("CreatedByUserId")]
         public virtual User? CreatedByUser { get; set; }
 
         [Display(Name = "Created Date")]
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         [Display(Name = "Updated Date")]
         public DateTime? UpdatedDate { get; set; }

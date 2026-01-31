@@ -6,7 +6,7 @@ namespace TalepYonetimi.Models
     public class User
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "First name is required.")]
         [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters.")]
@@ -37,7 +37,10 @@ namespace TalepYonetimi.Models
         public bool IsActive { get; set; } = true;
 
         [Display(Name = "Created Date")]
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
+        [Display(Name = "Updated Date")]
+        public DateTime? UpdatedDate { get; set; }
 
         // Navigation property
         public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
