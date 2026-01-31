@@ -12,6 +12,9 @@ namespace TalepYonetimi.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<RequestStatusHistory> RequestStatusHistories { get; set; }
 
@@ -23,7 +26,39 @@ namespace TalepYonetimi.Data
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.Email).IsUnique();
-                entity.Property(e => e.Role).HasConversion<int>();
+                
+                entity.HasOne(u => u.Role)
+                    .WithMany(r => r.Users)
+                    .HasForeignKey(u => u.RoleId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Role configuration
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.HasIndex(e => e.Name).IsUnique();
+            });
+
+            // Permission configuration
+            modelBuilder.Entity<Permission>(entity =>
+            {
+                entity.HasIndex(e => e.Name).IsUnique();
+            });
+
+            // RolePermission configuration (Many-to-Many)
+            modelBuilder.Entity<RolePermission>(entity =>
+            {
+                entity.HasIndex(e => new { e.RoleId, e.PermissionId }).IsUnique();
+
+                entity.HasOne(rp => rp.Role)
+                    .WithMany(r => r.RolePermissions)
+                    .HasForeignKey(rp => rp.RoleId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(rp => rp.Permission)
+                    .WithMany(p => p.RolePermissions)
+                    .HasForeignKey(rp => rp.PermissionId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Request configuration

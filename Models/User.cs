@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using TalepYonetimi.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TalepYonetimi.Models
 {
@@ -31,7 +31,10 @@ namespace TalepYonetimi.Models
 
         [Required]
         [Display(Name = "Role")]
-        public UserRole Role { get; set; } = UserRole.User;
+        public Guid RoleId { get; set; }
+
+        [ForeignKey("RoleId")]
+        public virtual Role? Role { get; set; }
 
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; } = true;
