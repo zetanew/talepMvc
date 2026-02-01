@@ -1,0 +1,85 @@
+@{
+    ViewData["Title"] = "Access Denied";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Request Management</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .denied-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 60px 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .denied-icon {
+            font-size: 80px;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+
+        .denied-card h1 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .denied-card p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="denied-card">
+        <div class="denied-icon">
+            🚫
+        </div>
+        <h1>Access Denied</h1>
+        <p>Sorry, you don't have permission to access this page. Please contact your administrator if you believe this
+            is an error.</p>
+
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                Go to Dashboard
+            </a>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary">
+                Login Again
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>
