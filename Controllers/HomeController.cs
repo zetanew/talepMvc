@@ -1,9 +1,11 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TalepYonetimi.Models;
 
 namespace TalepYonetimi.Controllers;
 
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -15,7 +17,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        return RedirectToAction("Index", "Requests");
     }
 
     public IActionResult Privacy()
