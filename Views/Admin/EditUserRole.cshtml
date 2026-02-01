@@ -1,0 +1,57 @@
+@model TalepYonetimi.ViewModels.UserRoleEditViewModel
+@{
+    ViewData["Title"] = $"Kullanıcı Rolü - {Model.FullName}";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-gear"></i> Kullanıcı Rolü Değiştir</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <p class="mb-1"><strong>Kullanıcı:</strong> @Model.FullName</p>
+                        <p class="mb-0"><strong>E-posta:</strong> @Model.Email</p>
+                    </div>
+
+                    <hr />
+
+                    <form asp-action="EditUserRole" method="post">
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="FullName" />
+                        <input type="hidden" asp-for="Email" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="RoleId" class="form-label">Rol Seçin</label>
+                            <select asp-for="RoleId" class="form-select">
+                                <option value="">-- Seçiniz --</option>
+                                @foreach (var role in Model.AvailableRoles)
+                                {
+                                    <option value="@role.Id" selected="@(role.Id == Model.RoleId)">@role.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="RoleId" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Users" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Geri
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
