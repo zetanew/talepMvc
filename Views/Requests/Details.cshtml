@@ -1,0 +1,322 @@
+@model TalepYonetimi.ViewModels.RequestDetailViewModel
+@using TalepYonetimi.Enums
+@{
+    ViewData["Title"] = $"Talep Detay - {Model.RequestNumber}";
+    
+    string GetStatusText(RequestStatus status) => status switch
+    {
+        RequestStatus.Draft => "Taslak",
+        RequestStatus.PendingApproval => "Onay Bekliyor",
+        RequestStatus.Approved => "Onaylandı",
+        RequestStatus.Rejected => "Reddedildi",
+        _ => status.ToString()
+    };
+}
+
+<div class="container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-file-text"></i> @Model.RequestNumber
+                    </h4>
+                    <div>
+                        @switch (Model.Status)
+                        {
+                            case RequestStatus.Draft:
+                                <span class="badge bg-secondary fs-6">Taslak</span>
+                                break;
+                            case RequestStatus.PendingApproval:
+                                <span class="badge bg-warning text-dark fs-6">Onay Bekliyor</span>
+                                break;
+                            case RequestStatus.Approved:
+                                <span class="badge bg-success fs-6">Onaylandı</span>
+                                break;
+                            case RequestStatus.Rejected:
+                                <span class="badge bg-danger fs-6">Reddedildi</span>
+                                break;
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h3>@Model.Title</h3>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Talep Türü:</strong>
+                            @switch (Model.RequestType)
+                            {
+                                case RequestType.Leave:
+                                    <span class="badge bg-info">İzin</span>
+                                    break;
+                                case RequestType.Equipment:
+                                    <span class="badge bg-secondary">Teçhizat</span>
+                                    break;
+                                case RequestType.Support:
+                                    <span class="badge bg-warning text-dark">Destek</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-light text-dark">Diğer</span>
+                                    break;
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Öncelik:</strong>
+                            @switch (Model.Priority)
+                            {
+                                case Priority.Low:
+                                    <span class="badge bg-success">Düşük</span>
+                                    break;
+                                case Priority.Medium:
+                                    <span class="badge bg-warning text-dark">Orta</span>
+                                    break;
+                                case Priority.High:
+                                    <span class="badge bg-danger">Yüksek</span>
+                                    break;
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Oluşturan:</strong> @Model.CreatedByUserName
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <h5>Açıklama</h5>
+                    <p class="text-muted" style="white-space: pre-line;">@Model.Description</p>
+
+                    <hr />
+
+                    <div class="row text-muted small">
+                        <div class="col-md-6">
+                            <i class="bi bi-calendar"></i> Oluşturulma: <span class="local-date" data-utc="@Model.CreatedDate.ToString("o")"></span>
+                        </div>
+                        <div class="col-md-6">
+                            @if (Model.UpdatedDate.HasValue)
+                            {
+                                <i class="bi bi-pencil"></i> <text>Son Değişiklik: <span class="local-date" data-utc="@Model.UpdatedDate.Value.ToString("o")"></span></text>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Listeye Dön
+                        </a>
+                        <div>
+                            @if (Model.CanEdit)
+                            {
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                                    <i class="bi bi-pencil"></i> Düzenle
+                                </a>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#submitModal">
+                                    <i class="bi bi-send"></i> Onaya Gönder
+                                </button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash"></i> Sil
+                                </button>
+                            }
+                            @if (Model.CanApprove)
+                            {
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#approveModal">
+                                    <i class="bi bi-check-circle"></i> Onayla
+                                </button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                                    <i class="bi bi-x-circle"></i> Reddet
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Durum Geçmişi</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <!-- İlk oluşturma -->
+                        <li class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <i class="bi bi-plus-circle text-success"></i>
+                                    <strong>Talep Oluşturuldu</strong>
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                @Model.CreatedByUserName - <span class="local-date" data-utc="@Model.CreatedDate.ToString("o")"></span>
+                            </small>
+                        </li>
+                        @foreach (var history in Model.StatusHistory)
+                        {
+                            <li class="mb-3 pb-3 border-bottom">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <span class="text-muted">@GetStatusText(history.OldStatus)</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                        <strong>@GetStatusText(history.NewStatus)</strong>
+                                    </div>
+                                </div>
+                                @if (!string.IsNullOrEmpty(history.Comment))
+                                {
+                                    <p class="mb-1 small text-muted fst-italic">"@history.Comment"</p>
+                                }
+                                <small class="text-muted">
+                                    @history.ChangedByUserName - <span class="local-date" data-utc="@history.ChangedDate.ToString("o")"></span>
+                                </small>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Onaya Gönder Modal -->
+<div class="modal fade" id="submitModal" tabindex="-1" aria-labelledby="submitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="submitModalLabel"><i class="bi bi-send"></i> Onaya Gönder</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu talebi onaya göndermek istediğinize emin misiniz?</p>
+                <p class="text-muted small">Onaya gönderildikten sonra talep üzerinde değişiklik yapamazsınız.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form asp-action="Submit" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send"></i> Onaya Gönder
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sil Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-trash"></i> Talebi Sil</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu talebi silmek istediğinize emin misiniz?</p>
+                <p class="text-danger"><strong>Bu işlem geri alınamaz!</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Onayla Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="approveModalLabel"><i class="bi bi-check-circle"></i> Talep Onayla - @Model.RequestNumber</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <form asp-action="ApproveReject" method="post">
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="hidden" name="RequestNumber" value="@Model.RequestNumber" />
+                <input type="hidden" name="Title" value="@Model.Title" />
+                <input type="hidden" name="IsApprove" value="true" />
+                <div class="modal-body">
+                    <div class="alert alert-success">
+                        <strong>@Model.Title</strong>
+                        <p class="mb-0 mt-2">Bu talebi onaylamak istediğinize emin misiniz?</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="approveComment" class="form-label">Açıklama (Opsiyonel)</label>
+                        <textarea name="Comment" id="approveComment" class="form-control" rows="3" placeholder="Onay ile ilgili not ekleyebilirsiniz..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Onayla
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Reddet Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="rejectModalLabel"><i class="bi bi-x-circle"></i> Talep Reddet - @Model.RequestNumber</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <form asp-action="ApproveReject" method="post">
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="hidden" name="RequestNumber" value="@Model.RequestNumber" />
+                <input type="hidden" name="Title" value="@Model.Title" />
+                <input type="hidden" name="IsApprove" value="false" />
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <strong>@Model.Title</strong>
+                        <p class="mb-0 mt-2">Bu talebi reddetmek istediğinize emin misiniz?</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rejectComment" class="form-label">Red Nedeni <span class="text-danger">*</span></label>
+                        <textarea name="Comment" id="rejectComment" class="form-control" rows="3" placeholder="Red nedenini açıklayınız..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Reddet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.local-date').forEach(function(el) {
+                var utcDate = new Date(el.dataset.utc);
+                el.textContent = utcDate.toLocaleDateString('tr-TR') + ' ' + utcDate.toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'});
+            });
+        });
+    </script>
+}

@@ -1,0 +1,170 @@
+@model TalepYonetimi.Services.DashboardViewModel
+@using TalepYonetimi.Enums
+@{
+    ViewData["Title"] = "Dashboard";
+    var canViewAll = (bool)(ViewBag.CanViewAll ?? false);
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Yeni Talep
+        </a>
+    </div>
+
+    <!-- İstatistik Kartları -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Toplam Talep</h6>
+                            <h2 class="mb-0">@Model.TotalRequests</h2>
+                        </div>
+                        <i class="bi bi-list-task display-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Onay Bekleyen</h6>
+                            <h2 class="mb-0">@Model.PendingApprovalCount</h2>
+                        </div>
+                        <i class="bi bi-hourglass-split display-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Onaylanan</h6>
+                            <h2 class="mb-0">@Model.ApprovedCount</h2>
+                        </div>
+                        <i class="bi bi-check-circle display-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Reddedilen</h6>
+                            <h2 class="mb-0">@Model.RejectedCount</h2>
+                        </div>
+                        <i class="bi bi-x-circle display-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Son Talepler -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-clock"></i> Son Talepler</h5>
+            <a asp-action="Index" class="btn btn-sm btn-outline-primary">Tümünü Gör</a>
+        </div>
+        <div class="card-body">
+            @if (Model.RecentRequests.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Talep No</th>
+                                <th>Başlık</th>
+                                <th>Öncelik</th>
+                                <th>Durum</th>
+                                @if (canViewAll)
+                                {
+                                    <th>Oluşturan</th>
+                                }
+                                <th>Tarih</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.RecentRequests)
+                            {
+                                <tr>
+                                    <td><strong>@item.RequestNumber</strong></td>
+                                    <td>@item.Title</td>
+                                    <td>
+                                        @switch (item.Priority)
+                                        {
+                                            case Priority.Low:
+                                                <span class="badge bg-success">Düşük</span>
+                                                break;
+                                            case Priority.Medium:
+                                                <span class="badge bg-warning text-dark">Orta</span>
+                                                break;
+                                            case Priority.High:
+                                                <span class="badge bg-danger">Yüksek</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @switch (item.Status)
+                                        {
+                                            case RequestStatus.Draft:
+                                                <span class="badge bg-secondary">Taslak</span>
+                                                break;
+                                            case RequestStatus.PendingApproval:
+                                                <span class="badge bg-warning text-dark">Onay Bekliyor</span>
+                                                break;
+                                            case RequestStatus.Approved:
+                                                <span class="badge bg-success">Onaylandı</span>
+                                                break;
+                                            case RequestStatus.Rejected:
+                                                <span class="badge bg-danger">Reddedildi</span>
+                                                break;
+                                        }
+                                    </td>
+                                    @if (canViewAll)
+                                    {
+                                        <td>@item.CreatedByUserName</td>
+                                    }
+                                    <td><span class="local-date" data-utc="@item.CreatedDate.ToString("o")"></span></td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <p class="text-muted mt-2">Henüz talep bulunmuyor.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.local-date').forEach(function(el) {
+                var utcDate = new Date(el.dataset.utc);
+                el.textContent = utcDate.toLocaleDateString('tr-TR') + ' ' + utcDate.toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'});
+            });
+        });
+    </script>
+}
