@@ -1,0 +1,59 @@
+@model TalepYonetimi.ViewModels.RequestApproveRejectViewModel
+@{
+    ViewData["Title"] = Model.IsApprove ? "Talep Onayla" : "Talep Reddet";
+    var headerClass = Model.IsApprove ? "bg-success text-white" : "bg-danger text-white";
+    var buttonClass = Model.IsApprove ? "btn-success" : "btn-danger";
+    var icon = Model.IsApprove ? "bi-check-circle" : "bi-x-circle";
+    var actionText = Model.IsApprove ? "Onayla" : "Reddet";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header @headerClass">
+                    <h4 class="mb-0">
+                        <i class="bi @icon"></i> Talep @actionText - @Model.RequestNumber
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert @(Model.IsApprove ? "alert-success" : "alert-danger")">
+                        <strong>@Model.Title</strong>
+                        <p class="mb-0 mt-2">
+                            Bu talebi @(Model.IsApprove ? "onaylamak" : "reddetmek") istediğinize emin misiniz?
+                        </p>
+                    </div>
+
+                    <form asp-action="ApproveReject" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="RequestNumber" />
+                        <input type="hidden" asp-for="Title" />
+                        <input type="hidden" asp-for="IsApprove" />
+
+                        <div class="mb-3">
+                            <label asp-for="Comment" class="form-label">
+                                @(Model.IsApprove ? "Açıklama (Opsiyonel)" : "Red Nedeni (Zorunlu)")
+                            </label>
+                            <textarea asp-for="Comment" class="form-control" rows="4"
+                                placeholder="@(Model.IsApprove ? "Onay ile ilgili not ekleyebilirsiniz..." : "Red nedenini açıklayınız...")"></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Vazgeç
+                            </a>
+                            <button type="submit" class="btn @buttonClass">
+                                <i class="bi @icon"></i> @actionText
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
