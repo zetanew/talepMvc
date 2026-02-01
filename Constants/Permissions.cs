@@ -20,6 +20,9 @@ namespace TalepYonetimi.Constants
         // Role Module
         public const string RolesManage = "Roles.Manage";
 
+        // Admin Module
+        public const string AdminPanel = "Admin.Panel";
+
         // Dashboard
         public const string DashboardViewStats = "Dashboard.ViewStats";
     }

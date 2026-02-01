@@ -1,0 +1,77 @@
+@model TalepYonetimi.ViewModels.RoleEditViewModel
+@{
+    ViewData["Title"] = $"Rol İzinleri - {Model.Name}";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-key"></i> Rol İzinleri: @Model.Name</h4>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <p class="text-muted">@Model.Description</p>
+                        <hr />
+                    }
+
+                    <form asp-action="EditRole" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+
+                        <h5 class="mb-3">İzinler</h5>
+                        <p class="text-muted small">Bu role vermek istediğiniz izinleri seçin.</p>
+
+                        <div class="row">
+                            @{
+                                var groupedPermissions = Model.Permissions
+                                .GroupBy(p => p.Name.Split('.')[0])
+                                .OrderBy(g => g.Key);
+                            }
+
+                            @foreach (var group in groupedPermissions)
+                            {
+                                <div class="col-md-6 mb-4">
+                                    <div class="card">
+                                        <div class="card-header bg-light">
+                                            <strong>@group.Key</strong>
+                                        </div>
+                                        <div class="card-body">
+                                            @foreach (var permission in group)
+                                            {
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" name="selectedPermissions"
+                                                        value="@permission.Id" id="perm_@permission.Id" @(permission.IsSelected
+                                                                                                                                                        ? "checked" : "") />
+                                                    <label class="form-check-label" for="perm_@permission.Id">
+                                                        @permission.Name
+                                                        @if (!string.IsNullOrEmpty(permission.Description))
+                                                        {
+                                                            <small class="text-muted d-block">@permission.Description</small>
+                                                        }
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <hr />
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Roles" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Geri
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
