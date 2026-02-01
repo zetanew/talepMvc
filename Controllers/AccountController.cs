@@ -21,7 +21,7 @@ namespace TalepYonetimi.Controllers
         public IActionResult Login(string? returnUrl = null)
         {
             if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Dashboard", "Requests");
 
             ViewData["ReturnUrl"] = returnUrl;
             return View();
@@ -40,7 +40,7 @@ namespace TalepYonetimi.Controllers
 
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                ModelState.AddModelError(string.Empty, "Geçersiz e-posta veya şifre.");
                 return View(model);
             }
 
@@ -50,8 +50,8 @@ namespace TalepYonetimi.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.FullName),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim("RoleId", user.RoleId.ToString()),
-                new Claim("RoleName", user.Role?.Name ?? "User")
+                new Claim(ClaimTypes.Role, user.Role?.Name ?? "User"),
+                new Claim("RoleId", user.RoleId.ToString())
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -69,14 +69,14 @@ namespace TalepYonetimi.Controllers
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
 
-            return RedirectToAction("Index", "Requests");
+            return RedirectToAction("Dashboard", "Requests");
         }
 
         [HttpGet]
         public IActionResult Register()
         {
             if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "Requests");
+                return RedirectToAction("Dashboard", "Requests");
 
             return View();
         }
@@ -96,11 +96,11 @@ namespace TalepYonetimi.Controllers
 
             if (user == null)
             {
-                ModelState.AddModelError("Email", "This email is already registered.");
+                ModelState.AddModelError("Email", "Bu e-posta adresi zaten kayıtlı.");
                 return View(model);
             }
 
-            TempData["SuccessMessage"] = "Registration successful! Please login.";
+            TempData["SuccessMessage"] = "Kayıt başarılı! Lütfen giriş yapın.";
             return RedirectToAction(nameof(Login));
         }
 
