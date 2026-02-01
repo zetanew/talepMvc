@@ -4,30 +4,30 @@ namespace TalepYonetimi.ViewModels
 {
     public class RegisterViewModel
     {
-        [Required(ErrorMessage = "First name is required.")]
-        [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters.")]
-        [Display(Name = "First Name")]
+        [Required(ErrorMessage = "Ad alanı zorunludur.")]
+        [StringLength(50, ErrorMessage = "Ad en fazla 50 karakter olabilir.")]
+        [Display(Name = "Ad")]
         public string FirstName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Last name is required.")]
-        [StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters.")]
-        [Display(Name = "Last Name")]
+        [Required(ErrorMessage = "Soyad alanı zorunludur.")]
+        [StringLength(50, ErrorMessage = "Soyad en fazla 50 karakter olabilir.")]
+        [Display(Name = "Soyad")]
         public string LastName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
-        [Display(Name = "Email")]
+        [Required(ErrorMessage = "E-posta adresi zorunludur.")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
+        [Display(Name = "E-posta")]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Password is required.")]
-        [StringLength(100, ErrorMessage = "Password must be at least {2} characters long.", MinimumLength = 6)]
+        [Required(ErrorMessage = "Şifre zorunludur.")]
+        [StringLength(100, ErrorMessage = "Şifre en az {2} karakter uzunluğunda olmalıdır.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Şifre")]
         public string Password { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
-        [Compare("Password", ErrorMessage = "Passwords do not match.")]
+        [Display(Name = "Şifre Tekrar")]
+        [Compare("Password", ErrorMessage = "Şifreler eşleşmiyor.")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 }
