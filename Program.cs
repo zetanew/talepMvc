@@ -14,6 +14,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Register Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 // Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
