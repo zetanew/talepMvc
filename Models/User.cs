@@ -8,41 +8,41 @@ namespace TalepYonetimi.Models
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [Required(ErrorMessage = "First name is required.")]
-        [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters.")]
-        [Display(Name = "First Name")]
+        [Required(ErrorMessage = "Ad alanı zorunludur.")]
+        [StringLength(50, ErrorMessage = "Ad 50 karakteri aşamaz.")]
+        [Display(Name = "Ad")]
         public string FirstName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Last name is required.")]
-        [StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters.")]
-        [Display(Name = "Last Name")]
+        [Required(ErrorMessage = "Soyad alanı zorunludur.")]
+        [StringLength(50, ErrorMessage = "Soyad 50 karakteri aşamaz.")]
+        [Display(Name = "Soyad")]
         public string LastName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        [Required(ErrorMessage = "E-posta adresi zorunludur.")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi giriniz.")]
         [StringLength(100)]
-        [Display(Name = "Email")]
+        [Display(Name = "E-posta")]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Password is required.")]
+        [Required(ErrorMessage = "Şifre zorunludur.")]
         [StringLength(255)]
-        [Display(Name = "Password")]
+        [Display(Name = "Şifre")]
         public string Password { get; set; } = string.Empty;
 
         [Required]
-        [Display(Name = "Role")]
+        [Display(Name = "Rol")]
         public Guid RoleId { get; set; }
 
         [ForeignKey("RoleId")]
         public virtual Role? Role { get; set; }
 
-        [Display(Name = "Is Active")]
+        [Display(Name = "Aktif")]
         public bool IsActive { get; set; } = true;
 
-        [Display(Name = "Created Date")]
+        [Display(Name = "Oluşturulma Tarihi")]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
-        [Display(Name = "Updated Date")]
+        [Display(Name = "Güncellenme Tarihi")]
         public DateTime? UpdatedDate { get; set; }
 
         // Navigation property

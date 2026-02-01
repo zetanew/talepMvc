@@ -16,25 +16,25 @@ namespace TalepYonetimi.Models
         public virtual Request? Request { get; set; }
 
         [Required]
-        [Display(Name = "Old Status")]
+        [Display(Name = "Eski Durum")]
         public RequestStatus OldStatus { get; set; }
 
         [Required]
-        [Display(Name = "New Status")]
+        [Display(Name = "Yeni Durum")]
         public RequestStatus NewStatus { get; set; }
 
         [StringLength(500)]
-        [Display(Name = "Comment")]
+        [Display(Name = "Açıklama")]
         public string? Comment { get; set; }
 
         [Required]
-        [Display(Name = "Changed By")]
+        [Display(Name = "Değiştiren")]
         public Guid ChangedByUserId { get; set; }
 
         [ForeignKey("ChangedByUserId")]
         public virtual User? ChangedByUser { get; set; }
 
-        [Display(Name = "Changed Date")]
+        [Display(Name = "Değişiklik Tarihi")]
         public DateTime ChangedDate { get; set; } = DateTime.UtcNow;
     }
 }

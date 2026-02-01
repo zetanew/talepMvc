@@ -9,43 +9,43 @@ namespace TalepYonetimi.Models
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [Display(Name = "Request No")]
+        [Display(Name = "Talep No")]
         [StringLength(20)]
         public string RequestNumber { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Title is required.")]
-        [StringLength(200, ErrorMessage = "Title cannot exceed 200 characters.")]
-        [Display(Name = "Title")]
+        [Required(ErrorMessage = "Başlık alanı zorunludur.")]
+        [StringLength(200, ErrorMessage = "Başlık 200 karakteri aşamaz.")]
+        [Display(Name = "Başlık")]
         public string Title { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Description is required.")]
-        [StringLength(2000, ErrorMessage = "Description cannot exceed 2000 characters.")]
-        [Display(Name = "Description")]
+        [Required(ErrorMessage = "Açıklama alanı zorunludur.")]
+        [StringLength(2000, ErrorMessage = "Açıklama 2000 karakteri aşamaz.")]
+        [Display(Name = "Açıklama")]
         public string Description { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Please select a request type.")]
-        [Display(Name = "Request Type")]
+        [Required(ErrorMessage = "Lütfen talep türü seçiniz.")]
+        [Display(Name = "Talep Türü")]
         public RequestType RequestType { get; set; }
 
-        [Required(ErrorMessage = "Please select priority.")]
-        [Display(Name = "Priority")]
+        [Required(ErrorMessage = "Lütfen öncelik seçiniz.")]
+        [Display(Name = "Öncelik")]
         public Priority Priority { get; set; }
 
         [Required]
-        [Display(Name = "Status")]
+        [Display(Name = "Durum")]
         public RequestStatus Status { get; set; } = RequestStatus.Draft;
 
         [Required]
-        [Display(Name = "Created By")]
+        [Display(Name = "Oluşturan")]
         public Guid CreatedByUserId { get; set; }
 
         [ForeignKey("CreatedByUserId")]
         public virtual User? CreatedByUser { get; set; }
 
-        [Display(Name = "Created Date")]
+        [Display(Name = "Oluşturulma Tarihi")]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
-        [Display(Name = "Updated Date")]
+        [Display(Name = "Güncellenme Tarihi")]
         public DateTime? UpdatedDate { get; set; }
 
         // Navigation property
