@@ -135,7 +135,7 @@
                                     {
                                         <td>@item.CreatedByUserName</td>
                                     }
-                                    <td><span class="local-date" data-utc="@item.CreatedDate.ToString("o")"></span></td>
+                                    <td><span class="local-date" data-utc="@DateTime.SpecifyKind(item.CreatedDate, DateTimeKind.Utc).ToString("o")"></span></td>
                                     <td>
                                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-eye"></i>

@@ -106,12 +106,12 @@
 
                     <div class="row text-muted small">
                         <div class="col-md-6">
-                            <i class="bi bi-calendar"></i> Oluşturulma: <span class="local-date" data-utc="@Model.CreatedDate.ToString("o")"></span>
+                            <i class="bi bi-calendar"></i> Oluşturulma: <span class="local-date" data-utc="@DateTime.SpecifyKind(Model.CreatedDate, DateTimeKind.Utc).ToString("o")"></span>
                         </div>
                         <div class="col-md-6">
                             @if (Model.UpdatedDate.HasValue)
                             {
-                                <i class="bi bi-pencil"></i> <text>Son Değişiklik: <span class="local-date" data-utc="@Model.UpdatedDate.Value.ToString("o")"></span></text>
+                                <i class="bi bi-pencil"></i> <text>Son Değişiklik: <span class="local-date" data-utc="@DateTime.SpecifyKind(Model.UpdatedDate.Value, DateTimeKind.Utc).ToString("o")"></span></text>
                             }
                         </div>
                     </div>
@@ -165,7 +165,7 @@
                                 </div>
                             </div>
                             <small class="text-muted">
-                                @Model.CreatedByUserName - <span class="local-date" data-utc="@Model.CreatedDate.ToString("o")"></span>
+                                @Model.CreatedByUserName - <span class="local-date" data-utc="@DateTime.SpecifyKind(Model.CreatedDate, DateTimeKind.Utc).ToString("o")"></span>
                             </small>
                         </li>
                         @foreach (var history in Model.StatusHistory)
@@ -183,7 +183,7 @@
                                     <p class="mb-1 small text-muted fst-italic">"@history.Comment"</p>
                                 }
                                 <small class="text-muted">
-                                    @history.ChangedByUserName - <span class="local-date" data-utc="@history.ChangedDate.ToString("o")"></span>
+                                    @history.ChangedByUserName - <span class="local-date" data-utc="@DateTime.SpecifyKind(history.ChangedDate, DateTimeKind.Utc).ToString("o")"></span>
                                 </small>
                             </li>
                         }

@@ -45,7 +45,7 @@
                                 <td><strong>@user.FullName</strong></td>
                                 <td>@user.Email</td>
                                 <td><span class="badge bg-primary">@user.RoleName</span></td>
-                                <td><span class="local-date" data-utc="@user.CreatedDate.ToString("o")"></span></td>
+                                <td><span class="local-date" data-utc="@DateTime.SpecifyKind(user.CreatedDate, DateTimeKind.Utc).ToString("o")"></span></td>
                                 <td>
                                     @if (user.IsActive)
                                     {
