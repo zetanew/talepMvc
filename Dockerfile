@@ -10,6 +10,9 @@ RUN dotnet restore TalepYonetimi.csproj
 COPY . ./
 RUN dotnet publish TalepYonetimi.csproj -c Release -o /app/publish
 
+# Copy appsettings explicitly to publish folder
+COPY appsettings.Production.json /app/publish/
+
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app

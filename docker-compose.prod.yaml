@@ -6,7 +6,7 @@ services:
     container_name: talebim-prod-db
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=${DB_PASSWORD:-TalebimProd2025!}
+      - SA_PASSWORD=TalebimProd2025!
       - MSSQL_PID=Express
     ports:
       - "1533:1433"
