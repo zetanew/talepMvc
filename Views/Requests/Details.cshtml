@@ -152,30 +152,43 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Durum Geçmişi</h5>
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Aktivite Geçmişi</h5>
                 </div>
                 <div class="card-body">
                     <ul class="list-unstyled">
-                        <!-- İlk oluşturma -->
-                        <li class="mb-3 pb-3 border-bottom">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-plus-circle text-success"></i>
-                                    <strong>Talep Oluşturuldu</strong>
-                                </div>
-                            </div>
-                            <small class="text-muted">
-                                @Model.CreatedByUserName - <span class="local-date" data-utc="@DateTime.SpecifyKind(Model.CreatedDate, DateTimeKind.Utc).ToString("o")"></span>
-                            </small>
-                        </li>
                         @foreach (var history in Model.StatusHistory)
                         {
                             <li class="mb-3 pb-3 border-bottom">
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <span class="text-muted">@GetStatusText(history.OldStatus)</span>
-                                        <i class="bi bi-arrow-right"></i>
-                                        <strong>@GetStatusText(history.NewStatus)</strong>
+                                        @if (history.OldStatus == history.NewStatus)
+                                        {
+                                            <!-- Düzenleme veya oluşturma logu -->
+                                            <i class="bi bi-pencil-square text-info"></i>
+                                            <strong>@GetStatusText(history.NewStatus)</strong>
+                                        }
+                                        else
+                                        {
+                                            <!-- Durum değişikliği logu -->
+                                            @switch (history.NewStatus)
+                                            {
+                                                case RequestStatus.PendingApproval:
+                                                    <i class="bi bi-send text-primary"></i>
+                                                    break;
+                                                case RequestStatus.Approved:
+                                                    <i class="bi bi-check-circle text-success"></i>
+                                                    break;
+                                                case RequestStatus.Rejected:
+                                                    <i class="bi bi-x-circle text-danger"></i>
+                                                    break;
+                                                default:
+                                                    <i class="bi bi-arrow-right-circle text-secondary"></i>
+                                                    break;
+                                            }
+                                            <span class="text-muted">@GetStatusText(history.OldStatus)</span>
+                                            <i class="bi bi-arrow-right"></i>
+                                            <strong>@GetStatusText(history.NewStatus)</strong>
+                                        }
                                     </div>
                                 </div>
                                 @if (!string.IsNullOrEmpty(history.Comment))

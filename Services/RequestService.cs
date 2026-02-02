@@ -142,6 +142,19 @@ namespace TalepYonetimi.Services
             };
 
             _context.Requests.Add(request);
+
+            // Oluşturma logu ekle
+            _context.RequestStatusHistories.Add(new RequestStatusHistory
+            {
+                Id = Guid.NewGuid(),
+                RequestId = request.Id,
+                OldStatus = RequestStatus.Draft,
+                NewStatus = request.Status,
+                Comment = request.Status == RequestStatus.Draft ? "Talep taslak olarak oluşturuldu." : "Talep oluşturuldu.",
+                ChangedByUserId = userId,
+                ChangedDate = DateTime.UtcNow
+            });
+
             await _context.SaveChangesAsync();
 
             return request;
@@ -158,11 +171,34 @@ namespace TalepYonetimi.Services
             if (request.Status != RequestStatus.Draft)
                 return false;
 
+            // Değişiklikleri kaydet
+            var changes = new List<string>();
+            if (request.Title != model.Title) changes.Add("başlık");
+            if (request.Description != model.Description) changes.Add("açıklama");
+            if (request.RequestType != model.RequestType) changes.Add("talep türü");
+            if (request.Priority != model.Priority) changes.Add("öncelik");
+
             request.Title = model.Title;
             request.Description = model.Description;
             request.RequestType = model.RequestType;
             request.Priority = model.Priority;
             request.UpdatedDate = DateTime.UtcNow;
+
+            // Düzenleme logu ekle
+            var changeComment = changes.Count > 0
+                ? $"Talep düzenlendi: {string.Join(", ", changes)} güncellendi."
+                : "Talep düzenlendi.";
+
+            _context.RequestStatusHistories.Add(new RequestStatusHistory
+            {
+                Id = Guid.NewGuid(),
+                RequestId = request.Id,
+                OldStatus = request.Status,
+                NewStatus = request.Status,
+                Comment = changeComment,
+                ChangedByUserId = userId,
+                ChangedDate = DateTime.UtcNow
+            });
 
             await _context.SaveChangesAsync();
             return true;
