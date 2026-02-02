@@ -1,0 +1,84 @@
+name: Deploy to Production
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+env:
+    APP_NAME: talebim
+    REPO_URL: https://github.com/${{ github.repository }}.git
+
+jobs:
+    deploy:
+        name: Deploy to Production Server
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Setup SSH Key
+              run: |
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.ALTUN_SSH_KEY }}" > ~/.ssh/deploy_key
+                  chmod 600 ~/.ssh/deploy_key
+                  ssh-keyscan -p ${{ secrets.ALTUN_PORT }} -H ${{ secrets.ALTUN_HOST }} >> ~/.ssh/known_hosts
+
+            - name: Deploy to Server
+              id: deploy
+              run: |
+                  ssh -i ~/.ssh/deploy_key -p ${{ secrets.ALTUN_PORT }} ${{ secrets.ALTUN_USER }}@${{ secrets.ALTUN_HOST }} << ENDSSH
+                    set -e
+                    
+                    echo "📁 Setting up deployment directory..."
+                    mkdir -p ~/talebim
+                    cd ~/talebim
+                    
+                    echo "📥 Cloning/updating repository..."
+                    if [ -d ".git" ]; then
+                      git fetch origin main
+                      git reset --hard origin/main
+                    else
+                      rm -rf ./* ./.[!.]* 2>/dev/null || true
+                      git clone --branch main --single-branch https://github.com/${{ github.repository }}.git .
+                    fi
+                    
+                    echo "🛑 Stopping existing containers..."
+                    docker compose -f docker-compose.prod.yaml down --remove-orphans || true
+                    
+                    echo "🔨 Building and starting containers..."
+                    DB_PASSWORD="${{ secrets.DB_PASSWORD }}" docker compose -f docker-compose.prod.yaml build --no-cache
+                    DB_PASSWORD="${{ secrets.DB_PASSWORD }}" docker compose -f docker-compose.prod.yaml up -d
+                    
+                    echo "🧹 Cleaning up old images..."
+                    docker image prune -f
+                    
+                    echo "✅ Deployment completed successfully!"
+                  ENDSSH
+
+            - name: Verify Deployment
+              run: |
+                  sleep 30
+                  ssh -i ~/.ssh/deploy_key -p ${{ secrets.ALTUN_PORT }} ${{ secrets.ALTUN_USER }}@${{ secrets.ALTUN_HOST }} << 'ENDSSH'
+                    cd ~/talebim
+                    echo "📊 Container Status:"
+                    docker compose -f docker-compose.prod.yaml ps
+                    
+                    echo ""
+                    echo "📝 App Logs (last 20 lines):"
+                    docker logs talebim-prod-app --tail 20
+                  ENDSSH
+
+            - name: Send Telegram Notification (Success)
+              if: success()
+              run: |
+                  ssh -i ~/.ssh/deploy_key -p ${{ secrets.ALTUN_PORT }} ${{ secrets.ALTUN_USER }}@${{ secrets.ALTUN_HOST }} "/opt/scripts/telegram/send.sh '✅ Talebim.shop Deploy Başarılı! | 📦 Repo: ${{ github.repository }} | 🌿 Branch: ${{ github.ref_name }} | 👤 Deployer: ${{ github.actor }} | 🌐 Site: https://talebim.shop'"
+
+            - name: Send Telegram Notification (Failure)
+              if: failure()
+              run: |
+                  ssh -i ~/.ssh/deploy_key -p ${{ secrets.ALTUN_PORT }} ${{ secrets.ALTUN_USER }}@${{ secrets.ALTUN_HOST }} "/opt/scripts/telegram/send.sh '❌ Talebim.shop Deploy Başarısız! | 📦 Repo: ${{ github.repository }} | 🌿 Branch: ${{ github.ref_name }} | 👤 Deployer: ${{ github.actor }} | ⚠️ GitHub Actions loglarını kontrol edin.'"
+
+            - name: Cleanup SSH Key
+              if: always()
+              run: |
+                  rm -f ~/.ssh/deploy_key

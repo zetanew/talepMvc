@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  talebim-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: talebim-prod-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD:-TalebimProd2025!}
+      - MSSQL_PID=Express
+    ports:
+      - "1533:1433"
+    volumes:
+      - talebim_prod_data:/var/opt/mssql
+    networks:
+      - talebim-network
+    restart: unless-stopped
+
+  talebim-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: talebim-prod-app
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=talebim-db;Database=TalepYonetimi;User Id=sa;Password=${DB_PASSWORD:-TalebimProd2025!};TrustServerCertificate=True;
+    ports:
+      - "5080:8080"
+    networks:
+      - talebim-network
+    depends_on:
+      - talebim-db
+    restart: unless-stopped
+
+networks:
+  talebim-network:
+    driver: bridge
+
+volumes:
+  talebim_prod_data:
