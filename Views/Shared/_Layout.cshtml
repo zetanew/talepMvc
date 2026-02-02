@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Talep Yönetim Sistemi</title>
+    <title>@ViewData["Title"] - Talebim.shop</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
@@ -17,7 +17,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Requests" asp-action="Dashboard">
-                    <i class="bi bi-clipboard-check"></i> Talep Yönetimi
+                    <i class="bi bi-clipboard-check"></i> Talebim.shop
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Menüyü aç/kapat">
@@ -109,7 +109,8 @@
 
     <footer class="border-top footer text-muted mt-auto py-3">
         <div class="container text-center">
-            &copy; @DateTime.Now.Year - Talep Yönetim Sistemi
+            <span>&copy; @DateTime.Now.Year - <a href="https://talebim.shop"
+                    class="text-decoration-none">Talebim.shop</a></span>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
