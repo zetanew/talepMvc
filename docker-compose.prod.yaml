@@ -23,7 +23,6 @@ services:
     container_name: talebim-prod-app
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=talebim-db;Database=TalepYonetimi;User Id=sa;Password=${DB_PASSWORD:-TalebimProd2025!};TrustServerCertificate=True;
     ports:
       - "5250:8080"
     networks:
