@@ -82,7 +82,6 @@ out/
 # **/Migrations/
 
 # Application settings (sensitive data)
-appsettings.Production.json
 appsettings.Local.json
 
 # Secret files
