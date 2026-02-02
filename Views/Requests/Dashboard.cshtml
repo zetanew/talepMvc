@@ -135,7 +135,9 @@
                                     {
                                         <td>@item.CreatedByUserName</td>
                                     }
-                                    <td><span class="local-date" data-utc="@DateTime.SpecifyKind(item.CreatedDate, DateTimeKind.Utc).ToString("o")"></span></td>
+                                    <td><span class="local-date"
+                                            data-utc="@DateTime.SpecifyKind(item.CreatedDate, DateTimeKind.Utc).ToString("o")"></span>
+                                    </td>
                                     <td>
                                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-eye"></i>
@@ -160,10 +162,10 @@
 
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.local-date').forEach(function(el) {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.local-date').forEach(function (el) {
                 var utcDate = new Date(el.dataset.utc);
-                el.textContent = utcDate.toLocaleDateString('tr-TR') + ' ' + utcDate.toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'});
+                el.textContent = utcDate.toLocaleDateString('tr-TR') + ' ' + utcDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
             });
         });
     </script>
